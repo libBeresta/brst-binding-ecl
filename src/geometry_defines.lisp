@@ -1,0 +1,75 @@
+;; 
+;; libBeresta
+;; 
+;; Заголовочные файлы для Embeddable Common Lisp (ecl)
+;; Дмитрий Соломенников, (с) 2025
+;;
+
+(in-package #:cl-beresta)
+
+(include-header)
+
+(enum LineCap (
+  
+  BUTT-CAP
+  ROUND-CAP
+  PROJECTING-SQUARE-CAP))
+
+(enum LineJoin (
+  
+  MITER-JOIN
+  ROUND-JOIN
+  BEVEL-JOIN))
+
+(enum BorderStyle (
+  
+  BORDERSTYLE-SOLID
+  BORDERSTYLE-DASHED
+  BORDERSTYLE-BEVELED
+  BORDERSTYLE-INSET
+  BORDERSTYLE-UNDERLINED))
+
+(enum BlendMode (
+  
+  BLENDMODE-NORMAL
+  BLENDMODE-COMPATIBLE
+  BLENDMODE-MULTIPLY
+  BLENDMODE-SCREEN
+  BLENDMODE-OVERLAY
+  BLENDMODE-DARKEN
+  BLENDMODE-LIGHTEN
+  BLENDMODE-COLOR-DODGE
+  BLENDMODE-COLOR-BURN
+  BLENDMODE-HARD-LIGHT
+  BLENDMODE-SOFT-LIGHT
+  BLENDMODE-DIFFERENCE
+  BLENDMODE-EXCLUSION))
+
+(enum ColorSpace (
+  
+  COLORSPACE-DEVICEGRAY
+  COLORSPACE-DEVICERGB
+  COLORSPACE-DEVICECMYK
+  COLORSPACE-CALGRAY
+  COLORSPACE-CALRGB
+  COLORSPACE-LAB
+  COLORSPACE-ICCBASED
+  COLORSPACE-SEPARATION
+  COLORSPACE-DEVICEN
+  COLORSPACE-INDEXED
+  COLORSPACE-PATTERN))
+
+(struct RGBColor
+  "Структура для хранения информации о цвете (RGB)"
+  (r REAL)
+  (g REAL)
+  (b REAL)
+)
+
+(struct CMYKColor
+  "Структура для хранения информации о цвете (CMYK)"
+  (c REAL)
+  (m REAL)
+  (y REAL)
+  (k REAL)
+)
