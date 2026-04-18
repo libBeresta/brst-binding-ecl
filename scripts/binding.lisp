@@ -84,7 +84,7 @@
               (push "" exports)
               (pushnew (str:concat "  ;; " filename) exports)
               (setf pointer-header filename))
-            (pushnew (str:concat "  #:" pointer) exports))))
+            (pushnew (str:concat "  #:" (under pointer)) exports))))
 
       ;; Функции (сортируем по имени файла)
       (let ((function-header ""))
@@ -100,7 +100,7 @@
               (push "" exports)
               (pushnew (str:concat "  ;; " filename) exports)
               (setf function-header filename))
-            (pushnew (str:concat "  #:" function) exports))))
+            (pushnew (str:concat "  #:" (under function)) exports))))
 
       ;; Перечисления (сортируем по имени файла)
       (let ((enum-header ""))
@@ -120,7 +120,7 @@
             (pushnew (str:concat "  ;; " enum) exports)
             ;; В перечислениях пишем не название, а элементы
             (dolist (ed (getf enum-data :elements))
-              (pushnew (str:concat "  #:" (getf ed :element)) exports)))))
+              (pushnew (str:concat "  #:" (under (getf ed :element))) exports)))))
 
       ;; Размеры бумаги
       (pushnew "" exports)
@@ -135,7 +135,7 @@
                                                       (getf x :origin)))
                                     *sizes-lsp*)
                      *sizes-lsp*))
-        (pushnew (str:concat "  #:PAGE-SIZE-" (getf s :id)) exports))
+        (pushnew (str:concat "  #:PAGE-SIZE-" (under (getf s :id))) exports))
 
       ;; Макросы, находящиеся в macro.lisp
       (pushnew "" exports)
