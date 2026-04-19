@@ -9,13 +9,10 @@
 
 (include-header)
 
-(func Doc-SaveToStream 
-     "BRST_Doc_SaveToStream" 
-      STATUS 
-  ((pdf Doc)))
-
-(func Doc-SaveToFile 
-     "BRST_Doc_SaveToFile" 
-      STATUS 
-  ((pdf Doc)
-   (filename CSTR)))
+(enum EncryptMode (
+   
+  (ENCRYPT-R0 0) 
+  (ENCRYPT-R1 1) 
+  (ENCRYPT-R2 2) 
+  (ENCRYPT-R3 3) 
+  (ENCRYPT-R4 4)))

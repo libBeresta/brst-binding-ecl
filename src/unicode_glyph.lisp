@@ -9,13 +9,12 @@
 
 (include-header)
 
-(func Doc-SaveToStream 
-     "BRST_Doc_SaveToStream" 
-      STATUS 
-  ((pdf Doc)))
+(func UnicodeToGlyphName 
+     "BRST_UnicodeToGlyphName" 
+      CSTR 
+  ((unicode UNICODE)))
 
-(func Doc-SaveToFile 
-     "BRST_Doc_SaveToFile" 
-      STATUS 
-  ((pdf Doc)
-   (filename CSTR)))
+(func GlyphNameToUnicode 
+     "BRST_GlyphNameToUnicode" 
+      UNICODE 
+  ((glyph-name CSTR)))

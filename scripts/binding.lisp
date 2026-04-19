@@ -33,6 +33,41 @@
 ;;
 ")
 
+
+(defun do-render (template-file
+                  data-file
+                  &optional &key
+                              (lang *language*)
+                              (output :no))
+  (when (not (eql output :no))
+    (princ (format nil "Processing ~A...~%" data-file)))
+
+  (mapcar #'(lambda (x)
+              (let* ((str (string x))
+                     (key (intern str :keyword))
+                     (val (string-downcase (concatenate 'string ":" str)))
+                     (substitute (gethash (cons val *language*) *substitutes*)))
+                (setf (getf djula:*default-template-arguments* key) substitute)))
+          +given-substitutes+)
+
+  (let* ((*language* lang)
+         (template (djula:compile-template* template-file))
+         (data (with-open-file (s data-file) (read s))))
+    (let ((res (apply #'djula:render-template*
+                      (cons template
+                            (cons nil
+                                  data)))))
+
+      (if (eq output :no)
+          res
+          (progn
+            (alexandria:write-string-into-file
+               res
+               output
+               :if-exists :supersede
+               :if-does-not-exist :create)
+            res)))))
+
 ;; Генератор привязки ECL
 (defun do-create-binding (args)
   (let* (;; Путь до файлов данных генератора
@@ -50,8 +85,8 @@
                                  (pathname "*.lsp"))))
 
          ;; Список файлов-шаблонов
-         (templates (directory (merge-pathnames (pathname templates-dir)
-                                                (pathname "*.dj"))))
+         (ecl-template  (merge-pathnames (pathname templates-dir)
+					 (pathname "ecl.dj")))
          ;; Целевая папка
          (target-path (pathname target)))
 
@@ -154,4 +189,13 @@
         (write-line (str:join (format nil "~%")
                               (reverse exports))
                     f)
-        (write-line +package-footer+ f)))))
+        (write-line +package-footer+ f))
+
+      (setf (getf djula:*default-template-arguments* :license) +license+)
+      (dolist (d data)
+	(let ((rendered (do-render ecl-template d)))
+	  (alexandria:write-string-into-file
+	   rendered
+	   (change-ext d (namestring target-path) "lisp")
+	   :if-exists :supersede
+           :if-does-not-exist :create))))))

@@ -9,13 +9,8 @@
 
 (include-header)
 
-(func Doc-SaveToStream 
-     "BRST_Doc_SaveToStream" 
-      STATUS 
-  ((pdf Doc)))
-
-(func Doc-SaveToFile 
-     "BRST_Doc_SaveToFile" 
-      STATUS 
+(func Doc-AttachFile 
+     "BRST_Doc_AttachFile" 
+      EmbeddedFile 
   ((pdf Doc)
-   (filename CSTR)))
+   (file CSTR)))

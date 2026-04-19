@@ -9,13 +9,15 @@
 
 (include-header)
 
-(func Doc-SaveToStream 
-     "BRST_Doc_SaveToStream" 
-      STATUS 
-  ((pdf Doc)))
-
-(func Doc-SaveToFile 
-     "BRST_Doc_SaveToFile" 
-      STATUS 
+(func Doc-Image-Jpeg-LoadFromFile 
+     "BRST_Doc_Image_Jpeg_LoadFromFile" 
+      Image 
   ((pdf Doc)
    (filename CSTR)))
+
+(func Doc-Image-Jpeg-LoadFromMemory 
+     "BRST_Doc_Image_Jpeg_LoadFromMemory" 
+      Image 
+  ((pdf Doc)
+   (buf BYTE*)
+   (size UINT)))

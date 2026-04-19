@@ -1,4 +1,4 @@
-{% include "ЛИЦЕНЗИЯ.txt" %}
+{{ license }}
 (in-package #:cl-beresta)
 
 (include-header)
