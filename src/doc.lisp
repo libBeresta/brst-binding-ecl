@@ -12,7 +12,6 @@
 (pointer Doc)
 
 (enum PdfVer (
-  
   VER-10
   VER-11
   VER-12
@@ -21,4 +20,5 @@
   VER-15
   VER-16
   VER-17
-  VER-20))
+  VER-20
+))

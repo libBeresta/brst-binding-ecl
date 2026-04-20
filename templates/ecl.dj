@@ -9,10 +9,10 @@
 {% endfor %}{% endif %}{% if pointers %}{% for pt in pointers %}
 (pointer {{ pt.name | under }})
 {% endfor %}{% endif %}{% if enums %}{% for enum in enums %}
-(enum {{enum.name | under }} (
-  {% for el in enum.elements %}{% if el.value%} 
+(enum {{enum.name | under }} ({% for el in enum.elements %}{% if el.value%}
   ({{ el.element | under }} {{el.value | hex0 }}){% else %}
-  {{ el.element | under }}{% endif %}{% endfor %}))
+  {{ el.element | under }}{% endif %}{% endfor %}
+))
 {% endfor %}{% endif %}{% if structs %}{% for st in structs %}
 (struct {{ st.name }}
   "{{ st | docf }}"{%if st.fields %}{% for fl in st.fields %}

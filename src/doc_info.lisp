@@ -10,7 +10,6 @@
 (include-header)
 
 (enum InfoType (
-  
   INFO-CREATION-DATE
   INFO-MOD-DATE
   INFO-AUTHOR
@@ -20,7 +19,8 @@
   INFO-SUBJECT
   INFO-KEYWORDS
   INFO-TRAPPED
-  INFO-GTS-PDFX))
+  INFO-GTS-PDFX
+))
 
 (func Doc-SetInfoAttr 
      "BRST_Doc_SetInfoAttr" 

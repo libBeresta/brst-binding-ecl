@@ -34,39 +34,6 @@
 ")
 
 
-(defun do-render (template-file
-                  data-file
-                  &optional &key
-                              (lang *language*)
-                              (output :no))
-  (when (not (eql output :no))
-    (princ (format nil "Processing ~A...~%" data-file)))
-
-  (mapcar #'(lambda (x)
-              (let* ((str (string x))
-                     (key (intern str :keyword))
-                     (val (string-downcase (concatenate 'string ":" str)))
-                     (substitute (gethash (cons val *language*) *substitutes*)))
-                (setf (getf djula:*default-template-arguments* key) substitute)))
-          +given-substitutes+)
-
-  (let* ((*language* lang)
-         (template (djula:compile-template* template-file))
-         (data (with-open-file (s data-file) (read s))))
-    (let ((res (apply #'djula:render-template*
-                      (cons template
-                            (cons nil
-                                  data)))))
-
-      (if (eq output :no)
-          res
-          (progn
-            (alexandria:write-string-into-file
-               res
-               output
-               :if-exists :supersede
-               :if-does-not-exist :create)
-            res)))))
 
 ;; Генератор привязки ECL
 (defun do-create-binding (args)
@@ -121,7 +88,7 @@
               (setf pointer-header filename))
             (pushnew (str:concat "  #:" (under pointer)) exports))))
 
-      ;; Функции (сортируем по имени файла)
+      ;; Экспорты функции (сортируем по имени файла)
       (let ((function-header ""))
         (pushnew "" exports)
         (pushnew "  ;; Functions" exports)
@@ -137,7 +104,7 @@
               (setf function-header filename))
             (pushnew (str:concat "  #:" (under function)) exports))))
 
-      ;; Перечисления (сортируем по имени файла)
+      ;; Экспорты перечислений (сортируем по имени файла)
       (let ((enum-header ""))
         (pushnew "" exports)
         (pushnew "  ;; Enums" exports)
@@ -157,7 +124,7 @@
             (dolist (ed (getf enum-data :elements))
               (pushnew (str:concat "  #:" (under (getf ed :element))) exports)))))
 
-      ;; Размеры бумаги
+      ;; Экспорты размеров бумаги
       (pushnew "" exports)
       (pushnew "  ;; Page sizes" exports)
       (pushnew "  ;; ==========" exports)
@@ -170,7 +137,11 @@
                                                       (getf x :origin)))
                                     *sizes-lsp*)
                      *sizes-lsp*))
-        (pushnew (str:concat "  #:PAGE-SIZE-" (under (getf s :id))) exports))
+	(if (getf s :skip)
+	    (progn
+	      (pushnew "  ;; Skipped in data file" exports)
+	      (pushnew (str:concat "  ;; #:PAGE-SIZE-" (under (getf s :id))) exports))
+	    (pushnew (str:concat "  #:PAGE-SIZE-" (under (getf s :id))) exports)))
 
       ;; Макросы, находящиеся в macro.lisp
       (pushnew "" exports)
@@ -191,6 +162,7 @@
                     f)
         (write-line +package-footer+ f))
 
+      ;; Обработка файлов данных с помощью шаблона
       (setf (getf djula:*default-template-arguments* :license) +license+)
       (dolist (d data)
 	(let ((rendered (do-render ecl-template d)))
@@ -198,4 +170,54 @@
 	   rendered
 	   (change-ext d (namestring target-path) "lisp")
 	   :if-exists :supersede
-           :if-does-not-exist :create))))))
+           :if-does-not-exist :create)))
+
+      ;; Обработка размеров бумаги
+      (flet ((process-sizes (sizes filename set-values)
+	       (let ((lines nil))
+
+		 (push +license+ lines)
+		 (push "" lines)
+		 (push "(in-package #:cl-beresta)" lines)
+		 (push "" lines)
+		 (push "(enum PageSizes (" lines)
+		 (loop for s in sizes
+		       for i from 0
+		       do (progn
+			    (let* ((skip-size (getf s :skip))
+				   (skip-mark (if skip-size ";; " "")))
+			      (when skip-size
+				(push "" lines)
+				(push "  ;; Skipped in data file" lines))
+			      (push (format nil
+					    "  ;; \"~A ~A\" (~Amm x ~Amm)"
+					    (getf s :origin)
+					    (getf s :caption)
+					    (getf s :width)
+					    (getf s :height))
+				    lines)			      
+			      (if set-values
+				  (push (str:concat
+					 "  " skip-mark "("
+					 (under (getf s :id))
+					 " "
+					 (write-to-string i)
+					 ")")
+					lines)
+				  (push (str:concat "  " skip-mark (under (getf s :id)))
+					lines)))))
+		 (push "))" lines)
+		 (alexandria:write-string-into-file
+		  (str:join #\Newline (reverse lines))
+		  (merge-pathnames target-path (pathname filename))
+		  :if-exists :supersede
+		  :if-does-not-exist :create))))
+	
+	(process-sizes (remove-if-not
+			#'(lambda (x)
+                            (string-equal "ISO 216"
+                                          (getf x :origin)))
+                                    *sizes-lsp*)
+		       "page_sizes_216.lisp" nil)
+	(process-sizes *sizes-lsp* "page_sizes.lisp" t)
+	))))
