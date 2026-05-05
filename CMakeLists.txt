@@ -94,6 +94,12 @@ endif()
 
 include(${LIBBRST_SOURCE_DIR}/gen/data/gen.cmake)
 
+set(LIBBRST_SHARED_LIB OFF CACHE BOOL "" FORCE)
+set(LIBBRST_EXAMPLES   OFF CACHE BOOL "" FORCE)
+set(LIBBRST_TESTS      OFF CACHE BOOL "" FORCE)
+
+add_subdirectory("${LIBBRST_SOURCE_DIR}" "${CMAKE_CURRENT_BINARY_DIR}/libberesta-build")
+
 add_custom_command(
   TARGET binding
   COMMAND ${ECL_EXE}
@@ -103,5 +109,11 @@ add_custom_command(
        ${LIBBRST_SOURCE_DIR}/gen/data/
        ${CMAKE_SOURCE_DIR}/templates/
        ${CMAKE_SOURCE_DIR}/src/
+  COMMAND ${CMAKE_COMMAND} -E copy_if_different
+          ${CMAKE_SOURCE_DIR}/templates/macro.lisp
+          "${CMAKE_SOURCE_DIR}/src/macro.lisp"
+#  COMMAND ${CMAKE_COMMAND} -E copy_if_different
+#          $<TARGET_FILE:brst>
+#          "${CMAKE_SOURCE_DIR}/src/$<TARGET_FILE_NAME:brst>"
 )
 
