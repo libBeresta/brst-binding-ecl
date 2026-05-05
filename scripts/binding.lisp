@@ -1,6 +1,3 @@
-;; Выгружаем только ISO-216 (Бумага размеров A3, A4, B4, ...)
-(defvar *ISO-216-only* t)
-
 ;; Список сущностей, экспортируемых из файла macro.lisp
 (defparameter +exported-macros+
   '("page-set-dash-pattern"
@@ -131,12 +128,7 @@
 
       ;; Если задано, что нам нужны не все размеры,
       ;; то отсекаем из списка лишнее.
-      (dolist (s (if *ISO-216-only*
-                     (remove-if-not #'(lambda (x)
-                                        (string-equal "ISO 216"
-                                                      (getf x :origin)))
-                                    *sizes-lsp*)
-                     *sizes-lsp*))
+      (dolist (s *sizes-lsp*)
 	(if (getf s :skip)
 	    (progn
 	      (pushnew "  ;; Skipped in data file" exports)
@@ -213,11 +205,5 @@
 		  :if-exists :supersede
 		  :if-does-not-exist :create))))
 	
-	(process-sizes (remove-if-not
-			#'(lambda (x)
-                            (string-equal "ISO 216"
-                                          (getf x :origin)))
-                                    *sizes-lsp*)
-		       "page_sizes_216.lisp" nil)
 	(process-sizes *sizes-lsp* "page_sizes.lisp" t)
 	))))
