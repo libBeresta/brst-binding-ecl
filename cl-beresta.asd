@@ -54,5 +54,4 @@
              (:file "page_sizes" )
              (:file "page_routines" :depends-on ("package" "types" "page_sizes" "structs" "ext_gstate" "destination"))
              (:file "text_defines" :depends-on ("package" "types"))
-             (:file "text")
-             ))))
+             (:file "text")))))
