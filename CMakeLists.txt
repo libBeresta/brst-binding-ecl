@@ -1,7 +1,43 @@
+# brst-binding-ecl — mandatory baseline build entry point
+#
+# This CMakeLists.txt fulfils the libBeresta org-wide baseline for
+# `brst-binding-<lang>` repositories (README.md + CMakeLists.txt). It exists to
+# build the libBeresta library so that the ECL bindings can load and use.
+#
+# ECL binding uses static library `libbrst.a` and link it statically.
+#
+# Three modes are supported:
+#
+# 1. Vendored source mode:
+#      Drop libBeresta source into ext/libBeresta/ (e.g. via git submodule or
+#      tarball) and build from this directory:
+#          cmake -S . -B build
+#          cmake --build build
+#
+# 2. Relative source mode (multiple bindings development):
+#      libBeresta sources expected to be relative to
+#      binding repositories path like
+#
+#      libberesta/
+#      brst-binding-ecl/
+#      brst-binding-ruby/
+#      ... and so on ...
+#
+#      Build system will check if sources are available by ../libberesta
+#      path and if yes use it from that location.
+#
+#      Build commands are the same:
+#          cmake -S . -B build
+#          cmake --build build
+#
+# 3. External source mode (development convenience):
+#      Pass -DLIBBRST_SOURCE_DIR=/path/to/libBeresta clone:
+#          cmake -S . -B build -DLIBBRST_SOURCE_DIR=$HOME/src/libBeresta
+#          cmake --build build
+#
+
 project(brst-binding-ecl)
 cmake_minimum_required(VERSION 3.20)
-
-set(LIBBERESTA_DIR "../libberesta")
 
 add_custom_target(binding)
 add_custom_target(bundle)
@@ -17,28 +53,55 @@ if ("${ECL_EXE}" STREQUAL "ECL_EXE-NOTFOUND")
   message(FATAL_ERROR "`ecl` executable could not be found!")
 endif()
 
-set(BRST_LIB_DIR "")
+set(LIBRST_REL_DIR "../libberesta")
 
-if(EXISTS "${CMAKE_SOURCE_DIR}/${LIBBERESTA_DIR}/gen/data/gen.cmake")
-  set(BRST_LIB_DIR "${CMAKE_SOURCE_DIR}/${LIBBERESTA_DIR}/")
+set(LIBBRST_SOURCE_DIR)
+
+set(BRST_PROBE_FILE "gen/data/gen.cmake")
+
+# Check direct path
+message(DEBUG "Probing ${LIBBRST_SOURCE_DIR}/${BRST_PROBE_FILE} ...")
+
+if(EXISTS "${LIBBRST_SOURCE_DIR}/${BRST_PROBE_FILE}")
+  message(NOTICE "libBeresta source found at ${LIBBRST_SOURCE_DIR}.")
 else()
-  if(EXISTS "${LIBBERESTA_DIR}/gen/data/gen.cmake")
-    set(BRST_LIB_DIR "${LIBBERESTA_DIR}/")
+  # Check ../libberesta folder for sources
+  message(DEBUG "Probing ${CMAKE_CURRENT_LIST_DIR}/${LIBRST_REL_DIR}/${BRST_PROBE_FILE} ...")
+
+  if(EXISTS "${CMAKE_CURRENT_LIST_DIR}/${LIBRST_REL_DIR}/${BRST_PROBE_FILE}")
+    set(LIBBRST_SOURCE_DIR "${CMAKE_CURRENT_LIST_DIR}/${LIBRST_REL_DIR}")
+    message(NOTICE "libBeresta source found at ${LIBBRST_SOURCE_DIR}.")
   else()
-    message(FATAL_ERROR "libBeresta dir is not found or correct (set -DLIBBERESTA_DIR param)")
+
+    # Check ext/libberesta folder for sources
+    message(DEBUG "Probing ${CMAKE_CURRENT_LIST_DIR}/ext/libberesta/${BRST_PROBE_FILE} ...")
+
+    if(EXISTS "${CMAKE_CURRENT_LIST_DIR}/ext/libberesta/${BRST_PROBE_FILE}")
+      set(LIBBRST_SOURCE_DIR "${CMAKE_CURRENT_LIST_DIR}/ext/libberesta/")
+      message(NOTICE "libBeresta source found at ${LIBBRST_SOURCE_DIR}.")
+    else()
+      message(WARNING
+        "libBeresta source not found at '${LIBBRST_SOURCE_DIR}'.\n"
+        "Either:\n"
+        "  - Pass -DLIBBRST_SOURCE_DIR=/path/to/libBeresta, or\n"
+        "  - Place this repository source relative to ../libberesta/, or\n"
+        "  - Place libBeresta source in ext/libberesta/ (e.g. git submodule)\n"
+        "Skipping libBeresta build target.")
+      return()
+    endif()
   endif()
 endif()
 
-include(${BRST_LIB_DIR}/gen/data/gen.cmake)
+include(${LIBBRST_SOURCE_DIR}/gen/data/gen.cmake)
+
 add_custom_command(
   TARGET binding
-#    COMMAND ${CMAKE_COMMAND} -E ${CMAKE_SOURCE_DIR}/templates/macro.lisp 
-#    ${CMAKE_SOURCE_DIR}/src/macro.lisp
-  COMMAND ecl
-  ARGS --load ${BRST_LIB_DIR}/gen/scripts/utils.lisp
+  COMMAND ${ECL_EXE}
+  ARGS --load ${LIBBRST_SOURCE_DIR}/gen/scripts/utils.lisp
        --load ${CMAKE_SOURCE_DIR}/scripts/binding.lisp
        --load ${CMAKE_SOURCE_DIR}/scripts/launcher.lisp --
-       ${BRST_LIB_DIR}/gen/data/
+       ${LIBBRST_SOURCE_DIR}/gen/data/
        ${CMAKE_SOURCE_DIR}/templates/
        ${CMAKE_SOURCE_DIR}/src/
 )
+
