@@ -30,8 +30,6 @@
 ;;
 ")
 
-
-
 ;; Генератор привязки ECL
 (defun do-create-binding (args)
   (let* (;; Путь до файлов данных генератора
@@ -198,7 +196,8 @@
 					lines)
 				  (push (str:concat "  " skip-mark (under (getf s :id)))
 					lines)))))
-		 (push "))" lines)
+		 (push ")" lines)
+         (push ":prefix \"PAGE-SIZE\")" lines)
 		 (alexandria:write-string-into-file
 		  (str:join #\Newline (reverse lines))
 		  (merge-pathnames target-path (pathname filename))
