@@ -39,19 +39,23 @@
 project(brst-binding-ecl)
 cmake_minimum_required(VERSION 3.20)
 
-add_custom_target(binding)
-add_custom_target(bundle)
-add_custom_target(check)
-
 find_program(
     ECL_EXE
   NAMES
     ecl
 )
 
-if ("${ECL_EXE}" STREQUAL "ECL_EXE-NOTFOUND")
-  message(FATAL_ERROR "`ecl` executable could not be found!")
+set(ECL_BINARY)
+
+if (NOT EXISTS ${ECL_BINARY})
+  if ("${ECL_EXE}" STREQUAL "ECL_EXE-NOTFOUND")
+    message(FATAL_ERROR "`ecl` executable could not be found!")
+  else()
+    set(ECL_BINARY ${ECL_EXE})
+  endif()
+
 endif()
+
 
 set(LIBRST_REL_DIR "../libberesta")
 
@@ -100,9 +104,13 @@ set(LIBBRST_TESTS      OFF CACHE BOOL "" FORCE)
 
 add_subdirectory("${LIBBRST_SOURCE_DIR}" "${CMAKE_CURRENT_BINARY_DIR}/libberesta-build")
 
+add_custom_target(binding)
+add_custom_target(bundle)
+add_custom_target(check DEPENDS brst)
+
 add_custom_command(
   TARGET binding
-  COMMAND ${ECL_EXE}
+  COMMAND ${ECL_BINARY}
   ARGS --load ${LIBBRST_SOURCE_DIR}/gen/scripts/utils.lisp
        --load ${CMAKE_SOURCE_DIR}/scripts/binding.lisp
        --load ${CMAKE_SOURCE_DIR}/scripts/launcher.lisp --
@@ -112,8 +120,25 @@ add_custom_command(
   COMMAND ${CMAKE_COMMAND} -E copy_if_different
           ${CMAKE_SOURCE_DIR}/templates/macro.lisp
           "${CMAKE_SOURCE_DIR}/src/macro.lisp"
+)
+
 #  COMMAND ${CMAKE_COMMAND} -E copy_if_different
 #          $<TARGET_FILE:brst>
 #          "${CMAKE_SOURCE_DIR}/src/$<TARGET_FILE_NAME:brst>"
-)
 
+add_custom_command(
+  TARGET check
+  COMMAND ${ECL_BINARY}
+  ARGS
+#  --eval "(setf c:*cc* \"gcc\")"
+  --eval "(setf compiler::*delete-files* nil)"
+  --eval "(ext:install-c-compiler)"
+  --eval "(setf c:*user-cc-flags* \"-I${LIBBRST_SOURCE_DIR}/include -I${CMAKE_CURRENT_BINARY_DIR}/libberesta-build/include -fPIC\")"
+  --eval "(setf c:*user-linker-libs* \" -L$<TARGET_FILE_DIR:brst> -lbrst -fPIC -lz\")"
+  --eval "(pushnew \"${CMAKE_SOURCE_DIR}/\" asdf:*central-registry*)"
+  --eval "(asdf:load-system 'cl-beresta)"
+  --eval "(asdf:load-system 'cl-beresta/tests)"
+  --eval "(cl-beresta-tests:beresta-smoke-tests)"
+  --eval "(si:exit 0)"
+  VERBATIM
+)
