@@ -833,4 +833,5 @@
   (RUSSIAN-84X108-8 407)
   ;; "Russian GOST 5773-90 84x108/32" (130.0mm x 200.0mm)
   (RUSSIAN-84X108-32 408)
-))
+)
+:prefix "PAGE-SIZE")
