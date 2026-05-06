@@ -9,8 +9,8 @@
 ;;
 
 (asdf:defsystem :cl-beresta
-  :description "Заголовочные файлы Lisp для библиотеки libBeresta"
-  :author "Дмитрий Соломенников <dmitrys99@mail.ru>"
+  :description "Заголовочные файлы Embeddable Common Lisp для библиотеки libBeresta"
+  :author "Дмитрий Соломенников <dmitrys99@libberesta.ru>"
   :version "1.0.0"
   :components
   ((:module "src"
@@ -55,3 +55,22 @@
              (:file "page_routines" :depends-on ("package" "types" "page_sizes" "structs" "ext_gstate" "destination"))
              (:file "text_defines" :depends-on ("package" "types"))
              (:file "text")))))
+
+(asdf:defsystem #:quasirpg/tests
+  :depends-on (:quasirpg :fiveam)
+  :components ((:module "tests"
+            :serial t
+            :components ((:file "package")
+                         (:file "main")))))
+
+(asdf:defsystem #:cl-beresta/tests
+  :description "Тестовый набор для библиотеки libberesta"
+  :author "Дмитрий Соломенников <dmitrys99@libberesta.ru>"
+  :version "1.0.0"
+  :depends-on (:cl-beresta :fiveam :flexi-streams)
+  :components
+  ((:module "tests"
+    :serial t
+    :components
+    ((:file "package")
+     (:file "smoke")))))

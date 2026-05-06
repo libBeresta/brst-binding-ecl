@@ -159,12 +159,14 @@
   ;; doc_page_pattern.lsp
   #:Doc-Dict-RGBPatternFill-Select
   #:Doc-Page-RGBPatternFill-Select
-  #:Doc-Pattern-Tiling-Create
-  #:Doc-Pattern-Stream
   #:Doc-Dict-RGBPatternFillUint-Select
   #:Doc-Dict-RGBPatternFillHex-Select
   #:Doc-Page-RGBPatternFillHex-Select
   #:Doc-Page-RGBPatternFillUint-Select
+
+  ;; doc_pattern.lsp
+  #:Doc-Pattern-Tiling-Create
+  #:Doc-Pattern-Stream
 
   ;; doc_pdfa.lsp
   #:Doc-PDFA-SetConformance
