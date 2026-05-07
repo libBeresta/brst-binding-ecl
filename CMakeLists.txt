@@ -105,8 +105,8 @@ set(LIBBRST_TESTS      OFF CACHE BOOL "" FORCE)
 add_subdirectory("${LIBBRST_SOURCE_DIR}" "${CMAKE_CURRENT_BINARY_DIR}/libberesta-build")
 
 add_custom_target(binding)
-add_custom_target(bundle)
 add_custom_target(check DEPENDS brst)
+add_custom_target(bundle)
 
 add_custom_command(
   TARGET binding
@@ -122,15 +122,10 @@ add_custom_command(
           "${CMAKE_SOURCE_DIR}/src/macro.lisp"
 )
 
-#  COMMAND ${CMAKE_COMMAND} -E copy_if_different
-#          $<TARGET_FILE:brst>
-#          "${CMAKE_SOURCE_DIR}/src/$<TARGET_FILE_NAME:brst>"
-
 add_custom_command(
   TARGET check
   COMMAND ${ECL_BINARY}
   ARGS
-#  --eval "(setf c:*cc* \"gcc\")"
   --eval "(setf compiler::*delete-files* nil)"
   --eval "(ext:install-c-compiler)"
   --eval "(setf c:*user-cc-flags* \"-I${LIBBRST_SOURCE_DIR}/include -I${CMAKE_CURRENT_BINARY_DIR}/libberesta-build/include -fPIC\")"
@@ -140,5 +135,37 @@ add_custom_command(
   --eval "(asdf:load-system 'cl-beresta/tests)"
   --eval "(cl-beresta-tests:beresta-smoke-tests)"
   --eval "(si:exit 0)"
+  VERBATIM
+)
+
+
+install(FILES
+     "LICENSE"
+     "README.md"
+     "cl-beresta.asd"
+     "version"
+     DESTINATION .
+)
+
+install(DIRECTORY "src"   DESTINATION .)
+install(DIRECTORY "tests" DESTINATION .)
+
+# Tell CPack to create a zip file.
+set(CPACK_GENERATOR "ZIP")
+
+# Tell CPack what to name the zip file. It will append `.zip`.
+set(CPACK_PACKAGE_FILE_NAME "${CMAKE_PROJECT_NAME}")
+# Tell CPack not to put everything inside an enclosing directory.
+set(CPACK_INCLUDE_TOPLEVEL_DIRECTORY OFF)
+# Apparently this should be always on but isn't for backwards compatibility.
+set(CPACK_VERBATIM_VARIABLES YES)
+
+include(CPack)
+
+add_custom_command(
+  TARGET bundle
+  COMMAND "${CMAKE_COMMAND}" --build . --target package
+  WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}"
+  COMMENT "Bundling package"
   VERBATIM
 )
