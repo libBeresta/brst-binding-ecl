@@ -45,6 +45,17 @@
   ;; xref.lsp
   #:Xref
 
+ ;; Constants
+ ;; =========
+
+  ;; consts.lsp
+  #:MM
+  #:IN
+  #:PI
+  #:TRUE
+  #:OK
+  #:FALSE
+
   ;; Functions
   ;; =========
 

@@ -56,6 +56,7 @@
           (*enums-lsp*     (make-hash-table :test 'equalp))
           (*functions-lsp* (make-hash-table :test 'equalp))
           (*pointers-lsp*  (make-hash-table :test 'equalp))
+	  (*consts-lsp*    (make-hash-table :test 'equalp))
           (*sizes-lsp*     nil)
           ;; Список, формируемый из экспортов
           ;; сущностей. Основа для формирования package.lisp
@@ -82,6 +83,22 @@
               (pushnew (str:concat "  ;; " filename) exports)
               (setf pointer-header filename))
             (pushnew (str:concat "  #:" (under pointer)) exports))))
+
+      ;; Константы (сортируем по имени файла)
+      (let ((consts-header ""))
+        (pushnew "" exports)
+        (pushnew " ;; Constants" exports)
+        (pushnew " ;; =========" exports)
+        (dolist (c (sort
+                    (alexandria:hash-table-alist *consts-lsp*)
+                    #'string-lessp :key #'cadr))
+          (let ((const (car c))
+                (filename (cadr c)))
+            (when (not (string-equal filename consts-header))
+              (push "" exports)
+              (pushnew (str:concat "  ;; " filename) exports)
+              (setf consts-header filename))
+            (pushnew (str:concat "  #:" (under const)) exports))))
 
       ;; Экспорты функции (сортируем по имени файла)
       (let ((function-header ""))
