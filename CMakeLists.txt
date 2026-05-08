@@ -151,7 +151,7 @@ install(DIRECTORY "src"   DESTINATION .)
 install(DIRECTORY "tests" DESTINATION .)
 
 # Tell CPack to create a zip file.
-set(CPACK_GENERATOR "ZIP")
+set(CPACK_GENERATOR "TGZ")
 
 # Tell CPack what to name the zip file. It will append `.zip`.
 set(CPACK_PACKAGE_FILE_NAME "${CMAKE_PROJECT_NAME}")
