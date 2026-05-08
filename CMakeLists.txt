@@ -57,7 +57,9 @@ if (NOT EXISTS ${ECL_BINARY})
 endif()
 
 
-set(LIBRST_REL_DIR "../libberesta")
+set(LIBBRST_REL_DIR   "../libBeresta")
+set(LIBBRST_BUILD_DIR "libBeresta-build")
+set(LIBBRST_EXT_DIR   "ext/libBeresta")
 
 set(LIBBRST_SOURCE_DIR)
 
@@ -69,27 +71,27 @@ message(DEBUG "Probing ${LIBBRST_SOURCE_DIR}/${BRST_PROBE_FILE} ...")
 if(EXISTS "${LIBBRST_SOURCE_DIR}/${BRST_PROBE_FILE}")
   message(NOTICE "libBeresta source found at ${LIBBRST_SOURCE_DIR}.")
 else()
-  # Check ../libberesta folder for sources
-  message(DEBUG "Probing ${CMAKE_CURRENT_LIST_DIR}/${LIBRST_REL_DIR}/${BRST_PROBE_FILE} ...")
+  # Check ../libBeresta folder for sources
+  message(DEBUG "Probing ${CMAKE_CURRENT_LIST_DIR}/${LIBBRST_REL_DIR}/${BRST_PROBE_FILE} ...")
 
-  if(EXISTS "${CMAKE_CURRENT_LIST_DIR}/${LIBRST_REL_DIR}/${BRST_PROBE_FILE}")
-    set(LIBBRST_SOURCE_DIR "${CMAKE_CURRENT_LIST_DIR}/${LIBRST_REL_DIR}")
+  if(EXISTS "${CMAKE_CURRENT_LIST_DIR}/${LIBBRST_REL_DIR}/${BRST_PROBE_FILE}")
+    set(LIBBRST_SOURCE_DIR "${CMAKE_CURRENT_LIST_DIR}/${LIBBRST_REL_DIR}")
     message(NOTICE "libBeresta source found at ${LIBBRST_SOURCE_DIR}.")
   else()
 
-    # Check ext/libberesta folder for sources
-    message(DEBUG "Probing ${CMAKE_CURRENT_LIST_DIR}/ext/libberesta/${BRST_PROBE_FILE} ...")
+    # Check ext/libBeresta folder for sources
+    message(DEBUG "Probing ${CMAKE_CURRENT_LIST_DIR}/${LIBBRST_EXT_DIR}/${BRST_PROBE_FILE} ...")
 
-    if(EXISTS "${CMAKE_CURRENT_LIST_DIR}/ext/libberesta/${BRST_PROBE_FILE}")
-      set(LIBBRST_SOURCE_DIR "${CMAKE_CURRENT_LIST_DIR}/ext/libberesta/")
+    if(EXISTS "${CMAKE_CURRENT_LIST_DIR}/${LIBBRST_EXT_DIR}/${BRST_PROBE_FILE}")
+      set(LIBBRST_SOURCE_DIR "${CMAKE_CURRENT_LIST_DIR}/${LIBBRST_EXT_DIR}")
       message(NOTICE "libBeresta source found at ${LIBBRST_SOURCE_DIR}.")
     else()
       message(WARNING
         "libBeresta source not found at '${LIBBRST_SOURCE_DIR}'.\n"
         "Either:\n"
         "  - Pass -DLIBBRST_SOURCE_DIR=/path/to/libBeresta, or\n"
-        "  - Place this repository source relative to ../libberesta/, or\n"
-        "  - Place libBeresta source in ext/libberesta/ (e.g. git submodule)\n"
+        "  - Place this repository source relative to ../libBeresta/, or\n"
+        "  - Place libBeresta source in ext/libBeresta/ (e.g. git submodule)\n"
         "Skipping libBeresta build target.")
       return()
     endif()
@@ -102,7 +104,7 @@ set(LIBBRST_SHARED_LIB OFF CACHE BOOL "" FORCE)
 set(LIBBRST_EXAMPLES   OFF CACHE BOOL "" FORCE)
 set(LIBBRST_TESTS      OFF CACHE BOOL "" FORCE)
 
-add_subdirectory("${LIBBRST_SOURCE_DIR}" "${CMAKE_CURRENT_BINARY_DIR}/libberesta-build")
+add_subdirectory("${LIBBRST_SOURCE_DIR}" "${CMAKE_CURRENT_BINARY_DIR}/${LIBBRST_BUILD_DIR}")
 
 add_custom_target(binding)
 add_custom_target(check DEPENDS brst)
@@ -128,7 +130,7 @@ add_custom_command(
   ARGS
   --eval "(setf compiler::*delete-files* nil)"
   --eval "(ext:install-c-compiler)"
-  --eval "(setf c:*user-cc-flags* \"-I${LIBBRST_SOURCE_DIR}/include -I${CMAKE_CURRENT_BINARY_DIR}/libberesta-build/include -fPIC\")"
+  --eval "(setf c:*user-cc-flags* \"-I${LIBBRST_SOURCE_DIR}/include -I${CMAKE_CURRENT_BINARY_DIR}/${LIBBRST_BUILD_DIR}/include -fPIC\")"
   --eval "(setf c:*user-linker-libs* \" -L$<TARGET_FILE_DIR:brst> -lbrst -fPIC -lz\")"
   --eval "(pushnew \"${CMAKE_SOURCE_DIR}/\" asdf:*central-registry*)"
   --eval "(asdf:load-system 'cl-beresta)"
