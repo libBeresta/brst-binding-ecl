@@ -138,6 +138,7 @@ add_custom_command(
   VERBATIM
 )
 
+file(READ "version" VER)
 
 install(FILES
      "LICENSE"
@@ -153,10 +154,12 @@ install(DIRECTORY "tests" DESTINATION .)
 # Tell CPack to create a zip file.
 set(CPACK_GENERATOR "TGZ")
 
-# Tell CPack what to name the zip file. It will append `.zip`.
-set(CPACK_PACKAGE_FILE_NAME "${CMAKE_PROJECT_NAME}")
+# Tell CPack what to name the zip file. It will append `.tar.gz`.
+set(CPACK_PACKAGE_FILE_NAME "${CMAKE_PROJECT_NAME}-${VER}")
+
 # Tell CPack not to put everything inside an enclosing directory.
 set(CPACK_INCLUDE_TOPLEVEL_DIRECTORY OFF)
+
 # Apparently this should be always on but isn't for backwards compatibility.
 set(CPACK_VERBATIM_VARIABLES YES)
 
