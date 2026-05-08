@@ -199,8 +199,6 @@
   #:Doc-SetOpenAction
 
   ;; doc_xobject.lsp
-  #:Doc-XObject-CreateAsWhiteRect
-  #:Doc-XObject-CreateFromImage
   #:Doc-XObject-Create
 
   ;; error.lsp
