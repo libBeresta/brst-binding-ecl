@@ -9,10 +9,4 @@
 
 (include-header)
 
-(synonym EmbeddedFile Dict)
-
-(func Doc-AttachFile 
-     "BRST_Doc_AttachFile" 
-      EmbeddedFile 
-  ((pdf Doc)
-   (file CSTR)))
+(pointer Encoder)

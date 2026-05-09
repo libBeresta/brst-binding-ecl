@@ -9,6 +9,8 @@
 
 (include-header)
 
+(synonym PDFAType Dict)
+
 (func Doc-PDFA-SetConformance 
      "BRST_Doc_PDFA_SetConformance" 
       STATUS 

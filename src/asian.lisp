@@ -9,42 +9,42 @@
 
 (include-header)
 
-(func UseJPFonts 
-     "BRST_UseJPFonts" 
+(func Doc-UseJPFonts 
+     "BRST_Doc_UseJPFonts" 
       STATUS 
   ((pdf Doc)))
 
-(func UseKRFonts 
-     "BRST_UseKRFonts" 
+(func Doc-UseKRFonts 
+     "BRST_Doc_UseKRFonts" 
       STATUS 
   ((pdf Doc)))
 
-(func UseCNSFonts 
-     "BRST_UseCNSFonts" 
+(func Doc-UseCNSFonts 
+     "BRST_Doc_UseCNSFonts" 
       STATUS 
   ((pdf Doc)))
 
-(func UseCNTFonts 
-     "BRST_UseCNTFonts" 
+(func Doc-UseCNTFonts 
+     "BRST_Doc_UseCNTFonts" 
       STATUS 
   ((pdf Doc)))
 
-(func UseJPEncodings 
-     "BRST_UseJPEncodings" 
+(func Doc-UseJPEncodings 
+     "BRST_Doc_UseJPEncodings" 
       STATUS 
   ((pdf Doc)))
 
-(func UseKREncodings 
-     "BRST_UseKREncodings" 
+(func Doc-UseKREncodings 
+     "BRST_Doc_UseKREncodings" 
       STATUS 
   ((pdf Doc)))
 
-(func UseCNSEncodings 
-     "BRST_UseCNSEncodings" 
+(func Doc-UseCNSEncodings 
+     "BRST_Doc_UseCNSEncodings" 
       STATUS 
   ((pdf Doc)))
 
-(func UseCNTEncodings 
-     "BRST_UseCNTEncodings" 
+(func Doc-UseCNTEncodings 
+     "BRST_Doc_UseCNTEncodings" 
       STATUS 
   ((pdf Doc)))

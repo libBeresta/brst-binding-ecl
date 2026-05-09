@@ -27,6 +27,9 @@
   ;; doc.lsp
   #:Doc
 
+  ;; encoder.lsp
+  #:Encoder
+
   ;; error.lsp
   #:Error
 
@@ -60,14 +63,14 @@
   ;; =========
 
   ;; asian.lsp
-  #:UseJPEncodings
-  #:UseCNSEncodings
-  #:UseKREncodings
-  #:UseJPFonts
-  #:UseCNTFonts
-  #:UseCNTEncodings
-  #:UseCNSFonts
-  #:UseKRFonts
+  #:Doc-UseKRFonts
+  #:Doc-UseCNTFonts
+  #:Doc-UseJPEncodings
+  #:Doc-UseCNSFonts
+  #:Doc-UseJPFonts
+  #:Doc-UseKREncodings
+  #:Doc-UseCNTEncodings
+  #:Doc-UseCNSEncodings
 
   ;; base.lsp
   #:PageSize-Width
@@ -273,6 +276,15 @@
   #:Page-GrayStroke
   #:Page-Clip
   #:Page-SetGrayFill
+
+  ;; image.lsp
+  #:Image-Height
+  #:Image-ColorSpace
+  #:Image-Width
+  #:Image-BitsPerComponent
+  #:Image-AddSMask
+  #:Image-SetColorMask
+  #:Image-SetMaskImage
 
   ;; page_routines.lsp
   #:Page-SetExtGState

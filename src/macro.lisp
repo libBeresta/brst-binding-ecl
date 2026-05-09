@@ -12,6 +12,7 @@
     (         Date .  :pointer-void)
     (  Destination .  :pointer-void)
     (    ExtGState .  :pointer-void)
+    (        Image .  :pointer-void)
     (      Pattern .  :pointer-void)
     (       Matrix .  :pointer-void)
     (      Encoder .  :pointer-void)
